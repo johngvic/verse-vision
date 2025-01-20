@@ -5,7 +5,7 @@ function BookPicker({ books }) {
 
   return (
     <div>
-      {books.map(book => <p key={book.abbrev.pt} onClick={() => navigate(book.abbrev.pt)}>{book.name}</p>)}
+      {books.map(book => <p key={book.abbrev.pt} onClick={() => navigate(`${book.abbrev.pt}/1`)}>{book.name}</p>)}
     </div>
   );
 }

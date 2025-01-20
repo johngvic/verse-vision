@@ -7,14 +7,14 @@ export class BibleAPIClient {
     }
   }
 
-  async getBooks() {
+  getBooks = async () => {
     const response = await fetch(`${this.baseUrl}/books`, {
       headers: this.headers
     })
     return await response.json()
   }
 
-  async getChapter(book, chapter) {
+  getChapter = async (book, chapter) => {
     const response = await fetch(`${this.baseUrl}/verses/${this.bibleVersion}/${book}/${chapter}`, {
       headers: this.headers
     })

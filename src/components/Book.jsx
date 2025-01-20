@@ -2,17 +2,20 @@ import styled from 'styled-components'
 import { useEffect, useState, useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 import { BibleAPIClient } from '../api/BibleAPIClient'
+import { OpenAIClient } from '../api/OpenAIClient'
+import { useNavigate } from 'react-router-dom'
 
 function Book() {
-  const { book } = useParams();
-  const client = useMemo(() => new BibleAPIClient(), []);
+  const { book, chapter } = useParams();
   const [isLoading, setIsLoading] = useState(true);
-  const [chapter, setChapter] = useState(1);
   const [data, setData] = useState();
+  const navigate = useNavigate();
+  const bibleApiClient = useMemo(() => new BibleAPIClient(), []);
+  const aiClient = useMemo(() => new OpenAIClient())
 
   useEffect(() => {
     const fetchData = async () => {
-      const data = await client.getChapter(book, chapter);
+      const data = await bibleApiClient.getChapter(book, chapter);
       setData(data);
     }
 
@@ -21,13 +24,23 @@ function Book() {
     return () => {
       setIsLoading(false);
     }
-  }, [book, chapter, client]);
+  }, [book, chapter, bibleApiClient]);
+
+  const navigateToPrevious = () => {
+    const previousChapter = Number(chapter) - 1;
+    navigate(`../${book}/${previousChapter}`, { replace: true });
+  }
+
+  const navigateToNext = () => {
+    const nextChapter = Number(chapter) + 1;
+    navigate(`../${book}/${nextChapter}`, { replace: true });
+  }
 
   const renderNavigationButtons = () => {
     return (
       <div>
-        <NavigatePreviousButton onClick={() => setChapter((it) => it - 1)} disabled={chapter == 1}>Anterior</NavigatePreviousButton>
-        <NavigateNextButton onClick={() => setChapter((it) => it + 1)}>Próximo</NavigateNextButton>
+        <NavigatePreviousButton onClick={() => navigateToPrevious()} disabled={chapter == 1}>Anterior</NavigatePreviousButton>
+        <NavigateNextButton onClick={() => navigateToNext()}>Próximo</NavigateNextButton>
       </div>
     )
   }
